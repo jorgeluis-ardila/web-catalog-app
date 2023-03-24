@@ -2,6 +2,7 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const CopyPlugin = require('copy-webpack-plugin');
 
 // configure source and distribution folder paths
 const srcFolder = 'src'
@@ -39,6 +40,11 @@ module.exports = {
       {
         test: /\.json?$/,
         loader: 'json-loader'
+      },
+      // processes images files to use it in JS files
+      {
+        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        type: 'asset/resource'
       }
     ]
   },
@@ -52,7 +58,15 @@ module.exports = {
         titulo: 'La Lana Land | Amigos Lanudos'
       }
     }),
-    new MiniCssExtractPlugin()
+    new MiniCssExtractPlugin(),
+    new CopyPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, srcFolder, 'assets/images'),
+          to: 'assets/images'
+        }
+      ]
+    })
   ],
   // use full source maps
   devtool: 'inline-source-map',

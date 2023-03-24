@@ -18,6 +18,7 @@
   },
   "scripts": {
     "lint": "eslint \"**/*.js\" --ignore-path .gitignore",
+    "develop": "webpack --watch --mode development",
     "start": "webpack serve --open --mode development",
     "build": "webpack --mode production"
   },
@@ -33,6 +34,7 @@
     "@babel/plugin-transform-runtime": "^7.21.0",
     "@babel/preset-env": "^7.20.2",
     "babel-loader": "^9.1.2",
+    "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.3",
     "eslint": "^8.36.0",
     "eslint-config-standard": "^17.0.0",
