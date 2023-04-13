@@ -1,18 +1,31 @@
 main#wrapper {
   box-sizing: border-box;
-  background-color: rgba($main-blue--green,0.5);
+  position: relative;
   min-height: calc(100vh - 20px);
-  padding-bottom: 75px;
+  max-height: calc(100vh - 20px);
+  overflow: auto;
+  background-color: rgba($main-blue--green,0.5);
+}
+@keyframes stickyHeader {
+  from {
+    top: -100%;
+  }
+  to {
+    top: 0;
+  }
 }
 header {
-  position: sticky;
-  top: 0;
   box-sizing: border-box;
   width: 100%;
   grid-template-columns: 25% 50% 25%;
   display: grid;
   align-items: center;
   padding: 10px;
+  &.sticky {
+    position: sticky;
+    // top: 0;
+    animation stickyHeader 0.8s ease-out 0s;
+  }
   .logo {
     width: 90px;
     height: 90px;
@@ -79,7 +92,7 @@ footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: absolute;
+  position: fixed;
   bottom: 0px;
   left: 0px;
   width: 100%;
