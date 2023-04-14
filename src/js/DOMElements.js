@@ -9,7 +9,14 @@ export const getDOMObjects = () => {
   wrapper.style.paddingBottom = `${footer.clientHeight - 10}px`;
 
   // PRODUCTS LIST ELEMENTS
+  const root = $.getElementById('root');
   const productContainerEl = $.getElementsByClassName('products__list')[0];
+
+  // FILTERS ELEMENTS
+  const orderByEl = $.getElementsByClassName('orderbyBox__current')[0];
+  const orderByLabel = Array.from($.getElementsByClassName('orderbyBox__option'));
+  const orderByOption = Array.from($.getElementsByName('orderby'));
+  const orderViewButtonEl = Array.from($.getElementsByClassName('orderView__button'));
 
   // PAGINATION ELEMENTS
   const paginationEl = $.getElementsByClassName('pagination')[0];
@@ -31,7 +38,12 @@ export const getDOMObjects = () => {
   return {
     wrapper,
     header,
+    root,
     productContainerEl,
+    orderByEl,
+    orderByLabel,
+    orderByOption,
+    orderViewButtonEl,
     paginationEl,
     pageCounterEl,
     currentPagesEl,

@@ -1,10 +1,24 @@
 main#wrapper {
+  overflow: auto;
   box-sizing: border-box;
   position: relative;
   min-height: calc(100vh - 20px);
   max-height: calc(100vh - 20px);
-  overflow: auto;
   background-color: rgba($main-blue--green,0.5);
+  scrollbar-color: $comp-blue--dark/* $comp-gray--light */ transparent/* $comp-blue--dark */;
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    width: 4px;
+    height: 4px;
+    border-radius: 20px
+    background: $comp-blue--dark/* $comp-gray--light */;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent/* $comp-blue--dark */;
+  }
 }
 @keyframes stickyHeader {
   from {
@@ -15,24 +29,25 @@ main#wrapper {
   }
 }
 header {
-  box-sizing: border-box;
   width: 100%;
-  grid-template-columns: 25% 50% 25%;
-  display: grid;
-  align-items: center;
-  padding: 10px;
-  &.sticky {
-    position: sticky;
-    // top: 0;
-    animation stickyHeader 0.8s ease-out 0s;
+  .innerHeader{
+    grid-template-columns: 25% 50% 25%;
+    transition: all 0.3s ease-out 0s;
+    box-sizing: border-box;
+    display: grid;
+    align-items: center;
+    padding: 10px;
   }
   .logo {
+    transition: all 0.3s ease-out 0s;
     width: 90px;
     height: 90px;
     border-radius: 100%;
     background-color: $white;
     &__image {
+      transition: all 0.3s ease-out 0s;
       display: block;
+      width: 90%;
     }
   }
   .search-bar {
@@ -73,6 +88,7 @@ header {
   }
   .contact {
     justify-self: end;
+    transition: all 0.3s ease-out 0s;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -81,9 +97,29 @@ header {
     border-radius: 100%;
     background-color: $comp-gray--middle;
     svg {
-      width: 30px;
-      height: 30px;
+      transition: all 0.3s ease-out 0s;
+      width: 50%;
+      height: 50%;
       fill: $main-green;
+    }
+  }
+  &.sticky {
+    .innerHeader {
+      box-shadow 0 15px 15px -15px rgba($comp-gray--light, 0.5);
+      animation stickyHeader 0.8s ease-out 0s;
+      width calc(100% - 20px)
+      position: fixed;
+      background-image:
+        linear-gradient(to right, rgba($main-blue--green,0.5), rgba($main-blue--green,0.5)),
+        linear-gradient(to right, $white, $white);
+      .logo {
+        width: 50px;
+        height: 50px;
+      }
+      .contact {
+        width: 30px;
+        height: 30px;
+      }
     }
   }
 }

@@ -5,7 +5,9 @@ import { getDOMObjects } from '../DOMElements';
 const $ = document;
 
 function CategoryStructure (
-  
+  id,
+  name
 ) {
-
+  this.id = id;
+  this.name = name;
 }
