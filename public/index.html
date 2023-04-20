@@ -32,7 +32,7 @@
           <img class="logo__image" src="./assets/images/logo.svg" alt="La Lana Land">
         </figure>
         <div class="search-bar">
-          <input type="text" placeholder="¿Qué estas buscando?" class="search-bar__box">
+          <input type="text" placeholder="¿Qué buscas?" class="search-bar__box">
           <button class="search-bar__button">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M14.0625 9.375C14.0625 9.11625 14.2725 8.90625 14.5313 8.90625C14.79 8.90625 15 9.11625 15 9.375C15 9.63375 14.79 9.84375 14.5313 9.84375C14.2725 9.84375 14.0625 9.63375 14.0625 9.375Z" />
@@ -54,22 +54,27 @@
       </div>
     </header>
     <div id="root">
-      <ul class="categories"></ul>
+      <div class="categories swipper">
+        <ul class="categories__wrapper swiper-wrapper"></ul>
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-pagination"></div>
+      </div>
       <div class="products">
         <div class="products__filters">
           <div class="orderbyBox" id="orderbyBox">
             <div class="orderbyBox__current">
               <div class="orderbyBox__value active">
-                <input type="radio" name="orderby" id="default" class="orderbyBox__input" value="" checked>
+                <input type="radio" name="orderby" id="default" class="orderbyBox__input" value="" checked="true">
                 <p class="orderbyBox__text">Ordenar</p>
               </div>
               <div class="orderbyBox__value">
                 <input type="radio" name="orderby" id="ascendent" class="orderbyBox__input" value="asc">
-                <p class="orderbyBox__text">Asc</p>
+                <p class="orderbyBox__text">A - Z</p>
               </div>
               <div class="orderbyBox__value">
                 <input type="radio" name="orderby" id="decendent" class="orderbyBox__input" value="dec">
-                <p class="orderbyBox__text">Dec</p>
+                <p class="orderbyBox__text">Z - A</p>
               </div>
               <div class="orderbyBox__value">
                 <input type="radio" name="orderby" id="highprice" class="orderbyBox__input" value="maxPrice">
@@ -85,13 +90,13 @@
             </div>
             <ul class="orderbyBox__list">
               <li>
-                <label for="default" class="orderbyBox__option" aria-hidden="aria-hidden">Ordenar</label>
+                <label for="default" class="orderbyBox__option checked" aria-hidden="aria-hidden">Ordenar</label>
               </li>
               <li>
-                <label for="ascendent" class="orderbyBox__option" aria-hidden="aria-hidden">Asc</label>
+                <label for="ascendent" class="orderbyBox__option" aria-hidden="aria-hidden">A - Z</label>
               </li>
               <li>
-                <label for="decendent" class="orderbyBox__option" aria-hidden="aria-hidden">Dec</label>
+                <label for="decendent" class="orderbyBox__option" aria-hidden="aria-hidden">Z - A</label>
               </li>
               <li>
                 <label for="highprice" class="orderbyBox__option" aria-hidden="aria-hidden">Mayor precio</label>
@@ -102,7 +107,7 @@
             </ul>
           </div>
           <div class="orderView">
-            <button class="orderView__button orderView__button--five active" data-order="5">
+            <button class="orderView__button orderView__button--five" data-order="5">
               <span></span>
               <span></span>
               <span></span>

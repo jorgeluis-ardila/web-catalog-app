@@ -5,7 +5,7 @@ main#wrapper {
   min-height: calc(100vh - 20px);
   max-height: calc(100vh - 20px);
   background-color: rgba($main-blue--green,0.5);
-  scrollbar-color: $comp-blue--dark/* $comp-gray--light */ transparent/* $comp-blue--dark */;
+  scrollbar-color: $comp-blue--dark transparent;
   &::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -14,29 +14,24 @@ main#wrapper {
     width: 4px;
     height: 4px;
     border-radius: 20px
-    background: $comp-blue--dark/* $comp-gray--light */;
+    background: $comp-blue--dark;
   }
   &::-webkit-scrollbar-track {
-    background: transparent/* $comp-blue--dark */;
-  }
-}
-@keyframes stickyHeader {
-  from {
-    top: -100%;
-  }
-  to {
-    top: 0;
+    background: transparent;
   }
 }
 header {
   width: 100%;
   .innerHeader{
-    grid-template-columns: 25% 50% 25%;
     transition: all 0.3s ease-out 0s;
     box-sizing: border-box;
     display: grid;
+    grid-template-columns: 25% 50% 25%;
     align-items: center;
     padding: 10px;
+    @media only screen and (max-width: 767px) {
+      grid-template-columns: 20% 60% 20%;
+    }
   }
   .logo {
     transition: all 0.3s ease-out 0s;
@@ -44,6 +39,10 @@ header {
     height: 90px;
     border-radius: 100%;
     background-color: $white;
+    @media only screen and (max-width: 767px) {
+      width: 50px;
+      height: 50px;
+    }
     &__image {
       transition: all 0.3s ease-out 0s;
       display: block;
@@ -53,6 +52,10 @@ header {
   .search-bar {
     width: 500px;
     position: relative;
+    justify-self: center;
+    @media only screen and (max-width: 767px) {
+      width: 100%;
+    }
     &__box {
       background-color: rgba($comp-gray--light,0.2);
       box-sizing: border-box;
@@ -96,6 +99,10 @@ header {
     height: 60px;
     border-radius: 100%;
     background-color: $comp-gray--middle;
+    @media only screen and (max-width: 767px) {
+      width: 40px;
+      height: 40px;
+    }
     svg {
       transition: all 0.3s ease-out 0s;
       width: 50%;
@@ -106,9 +113,10 @@ header {
   &.sticky {
     .innerHeader {
       box-shadow 0 15px 15px -15px rgba($comp-gray--light, 0.5);
-      animation stickyHeader 0.8s ease-out 0s;
+      animation stickyHeader 0.5s ease-out 0s;
       width calc(100% - 20px)
       position: fixed;
+      z-index: 2;
       background-image:
         linear-gradient(to right, rgba($main-blue--green,0.5), rgba($main-blue--green,0.5)),
         linear-gradient(to right, $white, $white);
@@ -120,6 +128,14 @@ header {
         width: 30px;
         height: 30px;
       }
+    }
+  }
+  @keyframes stickyHeader {
+    from {
+      top: -100%;
+    }
+    to {
+      top: 10px;
     }
   }
 }

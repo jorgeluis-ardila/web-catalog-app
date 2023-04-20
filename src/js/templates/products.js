@@ -5,9 +5,11 @@ import { getDOMObjects } from '../DOMElements';
 const $ = document;
 const {
   productContainerEl,
+  searchBarEl,
+  searchBarElButtonEl,
   orderByEl,
-  orderByLabel,
-  orderByOption,
+  orderByLabelEl,
+  orderByOptionEl,
   orderViewButtonEl,
   paginationEl,
   pageCounterEl,
@@ -17,11 +19,18 @@ const {
   nextButtonEl,
   paginationButton
 } = getDOMObjects();
+const screenSize = {
+  Xlarge: 1025,
+  large: 900,
+  medium: 768,
+  Xsmall: 320,
+  small: 0
+};
 const productsPerPage = 15;
 let currentPage = 0;
 
 // PRODUCT ITEM STRUCTURE / PROTOTIPE
-function ProductStructure (
+const ProductStructure = function (
   id,
   name,
   price,
@@ -59,14 +68,14 @@ function ProductStructure (
 
     productItem.classList.add('product-item');
     productItem.dataset.id = this.id;
-    productItem.appendChild(figureImage).appendChild(image);
+    productItem.appendChild(image);
     productItem.appendChild(info);
 
     productItem.onclick = () => this.handleModal.show();
 
     return productItem;
   };
-  this.modalInfo = () => {
+  this.modalTemplate = () => {
     const background = $.createElement('div');
     const modal = $.createElement('div');
 
@@ -80,48 +89,80 @@ function ProductStructure (
   };
   this.handleModal = {
     show: () => {
-      $.body.appendChild(this.modalInfo());
+      $.body.appendChild(this.modalTemplate());
     },
     close: () => {
-      console.log(this.modalInfo());
-      this.modalInfo().remove();
+      console.log(this.modalTemplate());
+      this.modalTemplate().remove();
     }
   };
 };
 
-const getChecketOrderBy = () => orderByOption.find(radio => radio.checked).value;
+// HANDLE RESIZE SCREEN
+const resizeHandler = () => {
+  const innerwidth = window.innerWidth;
+  const buttonView = (classToFind) => orderViewButtonEl.find(button => button.classList.contains(classToFind));
 
-const renderProducts = async (orderBy = getChecketOrderBy(), FILTER_ENDPOINT = '') => {
+  productContainerEl.removeAttribute('style');
+  orderViewButtonEl.forEach(button => button.classList.remove('active', 'one-column'));
+  if (innerwidth >= screenSize.Xlarge) return buttonView('orderView__button--five').classList.add('active');
+  if (innerwidth >= screenSize.large) return buttonView('orderView__button--four').classList.add('active');
+  if (innerwidth >= screenSize.medium) return buttonView('orderView__button--three').classList.add('active');
+  if (innerwidth >= screenSize.Xsmall) return buttonView('orderView__button--two').classList.add('active');
+  if (innerwidth >= screenSize.small) {
+    productContainerEl.classList.add('one-column');
+    buttonView('orderView__button--one').classList.add('active');
+    return;
+  };
+};
+
+// GET ORDER BY STATUS
+const getCheckOrderBy = () => orderByOptionEl.find(radio => radio.checked).value;
+
+// GET SEARCH BAR VALUE
+const getSearchBarEl = () => searchBarEl.value;
+
+// GET THE PRODUCTS BASED ON THE ORDER BY
+const getProductsList = async (ENDPOINT, filterEndpoint, orderBy) => {
+  const products = await getData(ENDPOINT + filterEndpoint);
+  let sortedProducts;
+  switch (orderBy) {
+    // BY NAME ASC
+    case 'asc':
+      sortedProducts = products.sort((p1, p2) => (p1.title.toUpperCase() > p2.title.toUpperCase()) ? 1 : (p1.title.toUpperCase() < p2.title.toUpperCase()) ? -1 : 0);
+      break;
+    // BY NAME DES
+    case 'dec':
+      sortedProducts = products.sort((p1, p2) => (p1.title.toUpperCase() < p2.title.toUpperCase()) ? 1 : (p1.title.toUpperCase() > p2.title.toUpperCase()) ? -1 : 0);
+      break;
+    // BY NAME DES
+    case 'maxPrice':
+      sortedProducts = products.sort((p1, p2) => (p1.price < p2.price) ? 1 : (p1.price > p2.price) ? -1 : 0);
+      break;
+    // BY NAME DES
+    case 'minPrice':
+      sortedProducts = products.sort((p1, p2) => (p1.price > p2.price) ? 1 : (p1.price < p2.price) ? -1 : 0);
+      break;
+    default:
+      sortedProducts = products;
+      break;
+  }
+  return sortedProducts;
+};
+
+// GET A SEGMENT OF PRODUCTS BASED ON THE MAX PER PAGE
+const getElementsByPage = (dataProducts, totalPages) => {
+  currentPage < totalPages && currentPage++;
+  const initialSplit = (currentPage - 1) * productsPerPage;
+  const finalSplit = initialSplit + productsPerPage;
+  return dataProducts.slice(initialSplit, finalSplit);
+};
+
+const renderProducts = async (orderBy = getCheckOrderBy(), filterEndpoint = `/?title=${getSearchBarEl()}`) => {
   // GET THE TOTAL PAGES BASE ON THE TOTAL PRODUCTS
   const ENDPOINT = '/products';
-  const productsList = orderBy ? await getProductsList() : await getData(ENDPOINT + FILTER_ENDPOINT);
+  const productsList = orderBy ? await getProductsList(ENDPOINT, filterEndpoint, orderBy) : await getData(ENDPOINT + filterEndpoint);
   const totalPages = Math.ceil(productsList.length / productsPerPage);
-  // console.log(productsList);
-  /*  const totalPages = async () => {
-    const productsList = await getData(`${ENDPOINT}`);
-    return Math.ceil(productsList.length / productsPerPage);
-  }; */
-
-  async function getProductsList () {
-    const products = await getData(ENDPOINT + FILTER_ENDPOINT);
-    // BY NAME ASC
-    if (orderBy === 'asc') return products.sort((p1, p2) => (p1.title.toUpperCase() > p2.title.toUpperCase()) ? 1 : (p1.title.toUpperCase() < p2.title.toUpperCase()) ? -1 : 0);
-    // BY NAME DES
-    if (orderBy === 'dec') return products.sort((p1, p2) => (p1.title.toUpperCase() < p2.title.toUpperCase()) ? 1 : (p1.title.toUpperCase() > p2.title.toUpperCase()) ? -1 : 0);
-    // BY PRICE HIGH
-    if (orderBy === 'maxPrice') return products.sort((p1, p2) => (p1.price < p2.price) ? 1 : (p1.price > p2.price) ? -1 : 0);
-    // BY PRICE LOW
-    if (orderBy === 'minPrice') return products.sort((p1, p2) => (p1.price > p2.price) ? 1 : (p1.price < p2.price) ? -1 : 0);
-  };
-
-  // GET A SEGMENT OF PRODUCTS BASED ON THE MAX PER PAGE
-  /* async  */ function getElementsByPage (dataProducts) {
-    /* const total = await totalPages(); */
-    currentPage < totalPages/* total */ && currentPage++;
-    const initialSplit = (currentPage - 1) * productsPerPage;
-    const finalSplit = initialSplit + productsPerPage;
-    return dataProducts.slice(initialSplit, finalSplit);
-  };
 
   // HANDLE STATE OF PAGINATION BUTTONS
   function handleButtons (totalPages) {
@@ -130,44 +171,39 @@ const renderProducts = async (orderBy = getChecketOrderBy(), FILTER_ENDPOINT = '
   };
 
   // RENDER PRODUCTE LIST AND PAGINATION
-  /* async */ (function render (/* FILTER_ENDPOINT = `?offset=${currentPage === 1 ? 0 : productsPerPage * currentPage}&limit=${productsPerPage}` */) {
-    // const urlProducts = `${ENDPOINT}${FILTER_ENDPOINT}`;
-    // const dataProducts = !FILTER_ENDPOINT ? await getElementsByPage(currentPage, await getData(urlProducts)) : await getData(urlProducts);
-    const dataProducts = /* await  */getElementsByPage(/* await getData(urlProducts) */ productsList);
-    console.log(dataProducts);
-    // RENDER PRODUCTS
-    dataProducts.forEach(product => {
-      const productStructure = new ProductStructure(
-        product.id,
-        product.title,
-        product.price,
-        product.category.name,
-        product.description,
-        product.images[0]
-      );
-      productContainerEl.appendChild(productStructure.template());
-    });
+  const dataProducts = getElementsByPage(productsList, totalPages);
+  console.log(dataProducts);
+  // RENDER PRODUCTS
+  dataProducts.forEach(product => {
+    const productStructure = new ProductStructure(
+      product.id,
+      product.title,
+      product.price,
+      product.category.name,
+      product.description,
+      product.images[0]
+    );
+    productContainerEl.appendChild(productStructure.template());
+  });
 
-    // RENDER PAGINATION
-    currentPagesEl.innerHTML = currentPage;
-    totalPagesEl.innerHTML = /* await  */totalPages/* () */;
-    if (!$.body.contains(pageCounterEl)) {
-      pageCounterEl.appendChild(currentPagesEl);
-      currentPagesEl.insertAdjacentText('afterend', 'de');
-      pageCounterEl.appendChild(totalPagesEl);
-      paginationEl.appendChild(prevButtonEl);
-      paginationEl.appendChild(pageCounterEl);
-      paginationEl.appendChild(nextButtonEl);
-    }
-    handleButtons(totalPages);
-  })();
-
-  // return render;
+  // RENDER PAGINATION
+  currentPagesEl.innerHTML = currentPage;
+  totalPagesEl.innerHTML = totalPages;
+  if (!$.body.contains(pageCounterEl)) {
+    pageCounterEl.appendChild(currentPagesEl);
+    currentPagesEl.insertAdjacentText('afterend', 'de');
+    pageCounterEl.appendChild(totalPagesEl);
+    paginationEl.appendChild(prevButtonEl);
+    paginationEl.appendChild(pageCounterEl);
+    paginationEl.appendChild(nextButtonEl);
+  }
+  handleButtons(totalPages);
 };
 
-// HANDLE PAGINATION BUTTONS CLICKS
+// HANDLE ACTIONS
 (function () {
   // const render = renderProducts();
+  // HANDLE PAGINATION BUTTON
   paginationButton.forEach(button => {
     button.onclick = async () => {
       button.classList.contains('pagination__button--prevPage') && currentPage > 1 && (currentPage = currentPage - 2);
@@ -176,29 +212,60 @@ const renderProducts = async (orderBy = getChecketOrderBy(), FILTER_ENDPOINT = '
       await renderProducts();
     };
   });
-  orderByEl.onclick = () => orderByEl.parentNode.classList.toggle('active');
+
+  // HANDLE ORDER BY
   $.onclick = (e) => (!orderByEl.contains(e.target) || e.target.classList.contains('orderbyBox__input')) && orderByEl.parentNode.classList.remove('active');
-  orderByLabel.forEach((option) => {
+  orderByEl.onclick = () => orderByEl.parentNode.classList.toggle('active');
+  orderByLabelEl.forEach(option => {
     option.onclick = async (e) => {
-      const input = e.target.control;
-      const value = input.value;
-      input.checked = true;
-      productContainerEl.innerHTML = '';
-      await renderProducts(value);
+      const siblings = Array.from(option.parentElement.parentElement.children);
+
+      siblings.forEach(sibling => sibling.children[0].classList.remove('checked'));
+      option.classList.add('checked');
     };
   });
+  orderByOptionEl.forEach(option => {
+    option.onclick = async () => {
+      productContainerEl.innerHTML = '';
+      currentPage = 0;
+      await renderProducts(getCheckOrderBy());
+    };
+  });
+
+  // HANDLE ORDER VIEW
   orderViewButtonEl.forEach(button => {
     button.onclick = (e) => {
       const columns = button.dataset.order;
       const siblings = Array.from(button.parentElement.children);
+
       siblings.forEach(sibling => sibling.classList.remove('active'));
       button.classList.add('active');
       productContainerEl.removeAttribute('style');
       productContainerEl.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+      productContainerEl.classList.remove('one-column');
+      if (button.classList.contains('orderView__button--one')) productContainerEl.classList.add('one-column');
     };
   });
+  resizeHandler();
+  window.addEventListener('resize', resizeHandler);
+
+  // HANDLE SEARCH BAR
+  searchBarEl.addEventListener('change', async (e) => {
+    console.log(e.target.value);
+    productContainerEl.innerHTML = '';
+    currentPage = 0;
+    await renderProducts(getCheckOrderBy(), `/?title=${e.target.value}`);
+  });
+  searchBarElButtonEl.onclick = async (e) => {
+    console.log(getSearchBarEl());
+    productContainerEl.innerHTML = '';
+    currentPage = 0;
+    await renderProducts(getCheckOrderBy(), `/?title=${getSearchBarEl()}`);
+  };
 })();
 
 export {
-  renderProducts
+  renderProducts,
+  getSearchBarEl,
+  getCheckOrderBy
 };

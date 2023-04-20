@@ -4,22 +4,32 @@ const $ = document;
 export const getDOMObjects = () => {
   // MAIN CONTAINERS
   const wrapper = document.getElementById('wrapper');
-  const header = wrapper.getElementsByTagName('header')[0];
-  const footer = wrapper.getElementsByTagName('footer')[0];
+  const header = wrapper.querySelector('header');
+  const innerHeader = wrapper.querySelector('.innerHeader');
+  const footer = wrapper.querySelector('footer');
+  const root = $.getElementById('root');
   wrapper.style.paddingBottom = `${footer.clientHeight - 10}px`;
 
+  // CATEGORIES ELEMENTS
+  const categoriesContainerEl = $.querySelector('.categories');
+  const categoriesWrapperEl = $.querySelector('.categories__wrapper');
+
   // PRODUCTS LIST ELEMENTS
-  const root = $.getElementById('root');
-  const productContainerEl = $.getElementsByClassName('products__list')[0];
+  const productsContentEl = $.querySelector('.products');
+  const productContainerEl = $.querySelector('.products__list');
+  productsContentEl.style.minHeight = `${wrapper.clientHeight - ((footer.clientHeight - 10) + header.clientHeight)}px`;
 
   // FILTERS ELEMENTS
-  const orderByEl = $.getElementsByClassName('orderbyBox__current')[0];
-  const orderByLabel = Array.from($.getElementsByClassName('orderbyBox__option'));
-  const orderByOption = Array.from($.getElementsByName('orderby'));
-  const orderViewButtonEl = Array.from($.getElementsByClassName('orderView__button'));
+  const searchBarEl = $.querySelector('.search-bar__box');
+  const searchBarElButtonEl = $.querySelector('.search-bar__button');
+  const filtersBarEl = $.querySelector('.products__filters');
+  const orderByEl = $.querySelector('.orderbyBox__current');
+  const orderByLabelEl = [...$.querySelectorAll('.orderbyBox__option')];
+  const orderByOptionEl = [...$.getElementsByName('orderby')];
+  const orderViewButtonEl = [...$.querySelectorAll('.orderView__button')];
 
   // PAGINATION ELEMENTS
-  const paginationEl = $.getElementsByClassName('pagination')[0];
+  const paginationEl = $.querySelector('.pagination');
   const pageCounterEl = $.createElement('p');
   const currentPagesEl = $.createElement('span');
   const totalPagesEl = $.createElement('span');
@@ -38,11 +48,17 @@ export const getDOMObjects = () => {
   return {
     wrapper,
     header,
+    innerHeader,
     root,
+    categoriesContainerEl,
+    categoriesWrapperEl,
     productContainerEl,
+    filtersBarEl,
+    searchBarEl,
+    searchBarElButtonEl,
     orderByEl,
-    orderByLabel,
-    orderByOption,
+    orderByLabelEl,
+    orderByOptionEl,
     orderViewButtonEl,
     paginationEl,
     pageCounterEl,

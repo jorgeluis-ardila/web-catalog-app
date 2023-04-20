@@ -61,6 +61,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.20.0",
-    "nib": "^1.2.0"
+    "nib": "^1.2.0",
+    "swiper": "^9.2.3"
   }
 }

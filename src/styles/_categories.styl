@@ -1,0 +1,115 @@
+.categories {
+  max-width: calc(100px * 5);
+  margin: 0 auto 30px;
+  padding: 10px 10px 15px;
+  overflow: hidden;
+  position: relative;
+  &__wrapper {
+    // SNAP SCROLL
+    /*
+    display: grid;
+    grid-auto-flow: column;
+    // gap: 20px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-color: $comp-blue--dark transparent;
+    &::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    &::-webkit-scrollbar-thumb {
+      width: 3px;
+      height: 3px;
+      border-radius: 20px;
+      background: $comp-blue--dark;
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    */
+  }
+  .category-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin: 0 10px;
+    border-radius: 100px;
+    background-color: $white;
+    cursor: pointer;
+    opacity: 0.8;
+    // scroll-snap-align: center;
+    &__bg {
+      box-sizing: border-box;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      width 75px;
+      height: 75px;
+      margin: auto auto;
+      border: 1px dashed $comp-blue--light;
+      border-radius: 100px;
+      fill: rgba($main-blue--green, 0.3);
+    }
+    &__text {
+      width: 85%;
+      text-transform: uppercase;
+      color: $comp-gray;
+      font-weight: $medium;
+      font-size: 10px;
+      font-family: $font-family;
+      text-align: center;
+      z-index: 2;
+    }
+    &.active {
+      opacity: 1;
+      &__text {
+        font-weight: $bold;
+      }
+      &__bg {
+        fill: $comp-blue--light;
+        border-color: $comp-blue--dark;
+      }
+    }
+  }
+  .swiper-button{
+    &-next,
+    &-prev {
+      color: $comp-gray;
+      width: fit-content;
+      height: fit-content;
+      z-index: 2;
+      top: 50%;
+      transform: translateY(-50%);
+      margin: 0;
+      &::after {
+        font-size: 20px;
+      }
+    }
+    &-next {
+      right: 0;
+    }
+    &-prev {
+      left: 0;
+    }
+    &-disabled {
+    }
+    
+  }
+  .swiper-pagination {
+    z-index: 2;
+    &.swiper-pagination-bullets {
+      bottom: 0;
+    }
+    &-bullet {
+      background-color: $comp-gray--middle;
+      &-active {
+        background-color: $comp-gray;
+      }
+    }
+  }
+}

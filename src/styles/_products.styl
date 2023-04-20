@@ -9,11 +9,21 @@
   padding: 30px;
   border-radius: 30px 30px 0 0;
   background-color: $white;
+  @media only screen and (max-width: 767px) {
+    padding: 15px;
+  }
   &__filters {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 5px 0 25px;
+    transition: all 0.3s ease 0s;
+    &.sticky {
+      position: sticky;
+      top: 70px;
+      padding: 10px 5px;
+      background-color: $white;
+    }
     .orderbyBox {
       position: relative;
       width: 160px;
@@ -21,6 +31,12 @@
       font-weight: $regular;
       font-size: 13px;
       font-family: $font-family;
+      @media only screen and (min-width: 320px) and (max-width: 767px) {
+        width: 130px;
+      }
+      @media only screen and (max-width: 320px) {
+        width: 100%;
+      }
       &.active {
         .orderbyBox__list {
           opacity: 1;
@@ -62,7 +78,6 @@
       &__text { 
         display: none;
       }
-      
       &__list {
         animation-name: HideList;
         animation-duration: 0.5s;
@@ -85,7 +100,11 @@
         padding: 15px;
         &:hover,
         &:focus {
-          background-color: rgba($comp-gray, 0.18);
+          background-color: rgba($comp-gray, 0.1);
+        }
+        &.checked {
+          pointer-events: none;
+          background-color: rgba($comp-gray, 0.1);
         }
       }
     }
@@ -104,7 +123,6 @@
       align-items: center;
       gap: 10px;
       &__item {
-        
       }
       &__button {
         display: flex;
@@ -119,6 +137,9 @@
         outline: none;
         background-color: rgba($main-blue--light, 0.3);
         cursor: pointer;
+        @media only screen and (max-width: 767px) {
+          width: 50px;
+        }
         span {
           background-color: rgba($comp-gray, 0.4);
           display: block;
@@ -132,29 +153,33 @@
             background-color: rgba($comp-gray--middle, 0.8);
           }
         }
-        &--five,
+        &--five {
+          @media only screen and (max-width: 1025px) {
+            display: none;
+          }
+        }
         &--four {
-          @media screen and (max-width: 1025px) {
+          @media only screen and (max-width: 900px) {
             display: none;
           }
         }
         
         &--three {
-          @media screen and (min-width: 1025px) {
-            display: none;
-          }
-          @media screen and (max-width: 767px) {
-            display: none;
+          display: none;
+          @media only screen and (min-width: 767px) and (max-width: 1025px) {
+            display: flex;
           }
         }
         &--two {
-          @media screen and (min-width: 1025px) {
-            display: none;
+          display: none;
+          @media only screen and (min-width: 320px) and (max-width: 900px) {
+            display: flex;
           }
         }
         &--one {
-          @media screen and (min-width: 768px) {
-            display: none;
+          display: none;
+          @media only screen and (min-width: 320px) and (max-width: 767px) {
+            display: flex;
           }
         }
       }
@@ -165,40 +190,48 @@
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     align-items: stretch;
-    @media screen and (max-width: 1024px) {
+    @media only screen and (max-width: 1024px) {
       grid-template-columns: repeat(4, 1fr);
     }
-    @media screen and (max-width: 768px) {
+    @media only screen and (max-width: 768px) {
       grid-template-columns: repeat(3, 1fr);
     }
-    @media screen and (max-width: 600px) {
+    @media only screen and (max-width: 767px) {
       grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
     }
-    @media screen and (max-width: 400px) {
+    @media only screen and (max-width: 320px) {
       grid-template-columns: repeat(1, 1fr);
+    }
+    &.one-column {
+      gap: 20px;
+      .product-item {
+        display: block;
+      }
     }
   }
   .product-item {
     overflow: hidden;
     display: grid;
+    justify-content: stretch;
+    align-content: stretch;
     grid-template-columns: 1fr;
-    grid-template-rows: 66% 34%;
-    grid-template-areas:
-      "image"\
-      "info";
+    grid-template-rows: minmax(60px, auto) minmax(120px, auto);
     border-radius: 40px;
     background: rgba($comp-blue--light, 0.3);
     cursor: pointer;
     &__image {
-      height: fit-content;
+      display: flex;
+      align-items: center;
       overflow: hidden;
       border-radius: 0 0 40px 40px;
-      align-self: stretch;
-      img{
-        aspect-ratio: 1 / 1;
-        display: block;
-        width: 100%;
-      }
+    }
+    img{
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      display: block;
+      width: 100%;
+      border-radius: 0 0 40px 40px;
     }
     &__info {
       gap: 10px;
