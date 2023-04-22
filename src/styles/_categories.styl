@@ -1,9 +1,17 @@
 .categories {
   max-width: calc(100px * 5);
   margin: 0 auto 30px;
-  padding: 10px 10px 15px;
-  overflow: hidden;
+  padding: 10px 20px 15px;
   position: relative;
+  @media only screen and (max-width: 767px){
+    max-width: calc(90px * 3);
+  }
+  @media only screen and (max-width: 320px){
+    max-width: calc(90px * 2);
+  }
+  &__inner{
+    overflow: hidden;
+  }
   &__wrapper {
     // SNAP SCROLL
     /*
@@ -41,6 +49,9 @@
     cursor: pointer;
     opacity: 0.8;
     // scroll-snap-align: center;
+    @media only screen and (max-width: 767px){
+      margin: 0 5px;
+    }
     &__bg {
       box-sizing: border-box;
       position: absolute;
@@ -67,10 +78,10 @@
     }
     &.active {
       opacity: 1;
-      &__text {
+      .category-item__text {
         font-weight: $bold;
       }
-      &__bg {
+      .category-item__bg {
         fill: $comp-blue--light;
         border-color: $comp-blue--dark;
       }

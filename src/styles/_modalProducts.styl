@@ -1,0 +1,120 @@
+.modal-background {
+  position: absolute;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba($main-blue--dark, 0.8);
+}
+
+.modal-product {
+  overflow: hidden;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 40px;
+  width: 70%
+  min-height: 200px;
+  background-color: $white;
+  display: grid;
+  grid-template-columns: repeat(2, 50%);
+  align-content: stretch;
+  justify-content: stretch;
+  @media only screen and (max-width: 768px){
+    display: flex;
+    flex-direction: column;
+  }
+  @media only screen and (max-width: 767px){
+    width: 90%;
+    max-height: 90vh;
+  }
+  &__image {
+    display: flex;
+    img {
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      width: 100%;
+      display: block;
+    }
+  }
+  &__info {
+    padding: 10%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 27px;
+    @media only screen and (max-width: 767px){
+      padding: 20px;
+      gap: 18px;
+      overflow: auto;
+    }
+  }
+  &__name {
+    color: $comp-blue--dark;
+    font: $medium 30px/37px $font-family;
+    padding-top: 10px;
+    @media only screen and (max-width: 1024px){
+      font-size: 26px;
+      line-height: 33px;
+    }
+    @media only screen and (max-width: 768px){
+      padding: 0;
+    }
+    @media only screen and (max-width: 767px){
+      font-size: 23px;
+      line-height: 30px;
+    }
+  }
+  &__type {
+    font: italic $regular 15px/18px $font-family;
+    color: $comp-green;
+    margin-top 5px;
+    @media only screen and (max-width: 767px){
+      font-size: 13px;
+      line-height: 16px;
+    }
+  }
+  &__price {
+    font: $bold 22px/27px $font-family;
+    color: $comp-gray--middle;
+    @media only screen and (max-width: 767px){
+      font-size: 18px;
+      line-height: 23px;
+    }
+  }
+  &__description {
+    font: $regular 15px/22px $font-family;
+    color: $comp-gray--light;
+    @media only screen and (max-width: 767px){
+      font-size: 13px;
+      line-height: 20px;
+    }
+  }
+  &__close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    border: none;
+    outline: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 10px;
+    @media only screen and (max-width: 768px){
+      top: 15px;
+      right: 15px;
+      border-radius: 100px;
+      background-color rgba($comp-blue--dark, 0.6);
+    }
+    svg {
+      display: block;
+      width: 20px;
+      height: 20px;
+      fill: $main-blue--dark;
+      @media only screen and (max-width: 768px){
+        fill: $white;
+      }
+    }
+  }
+}

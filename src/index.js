@@ -23,7 +23,6 @@ wrapper.onscroll = async function (e) {
   // ACTION FOR INFINITE SCROLL
   if ((this.scrollHeight - this.clientHeight) === scrollY) await renderProducts();
   // STICKY HEADER
-  // await asyncTimeout(500).then(() => );
   header.classList.toggle('sticky', headerValidation);
   header.style.height = `${header.clientHeight}px`;
   filtersBarEl.classList.toggle('sticky', headerValidation);

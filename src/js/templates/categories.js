@@ -1,13 +1,13 @@
 'use strict';
 import { getData } from '../utils/getData';
 import { getDOMObjects } from '../DOMElements';
-import { renderProducts, getSearchBarEl, getCheckOrderBy } from './products';
+import { resetLayout, renderProducts } from './products';
 import Swiper from 'swiper/bundle';
 import 'swiper/css/bundle';
 
 const $ = document;
 const {
-  categoriesContainerEl,
+  categoriesInnerContainerEl,
   categoriesWrapperEl
 } = getDOMObjects();
 
@@ -33,13 +33,16 @@ const CategoryStructure = function (
     `;
     const text = $.createElement('p');
 
-    categoryItem.classList.add('category-item', 'swiper-slide');
+    categoryItem.classList.add('category-item', 'swiper-slide', (this.id === 0 && this.name === 'Todo') && 'active');
+    categoryItem.dataset.id = this.id;
     text.classList.add('category-item__text');
     text.innerText = this.name;
     categoryItem.innerHTML = bgItem;
     categoryItem.appendChild(text);
 
     categoryItem.onclick = () => {
+      const siblings = Array.from(categoryItem.parentElement.children);
+      siblings.forEach(sibling => sibling.classList.remove('active'));
       categoryItem.classList.add('active');
       this.handleFilter();
     };
@@ -47,17 +50,16 @@ const CategoryStructure = function (
     return categoryItem;
   };
   this.handleFilter = () => {
-    console.log(getSearchBarEl() ? `/?categoryId=${this.id}&title=${getSearchBarEl()}` : `/?categoryId=${this.id}`);
-    renderProducts(getCheckOrderBy(), getSearchBarEl() ? `/?categoryId=${this.id}&title=${getSearchBarEl()}` : `/?categoryId=${this.id}`);
+    resetLayout(0);
+    renderProducts();
   };
 };
 
 const renderCategories = async () => {
   const ENDPOINT = '/categories';
   const categoriesList = await getData(ENDPOINT);
-
-  // console.log(categoriesList);
   // RENDER CATEGORIES
+  categoriesList.unshift({ id: 0, name: 'Todo' });
   categoriesList.forEach(category => {
     const categoryStructure = new CategoryStructure(
       category.id,
@@ -67,24 +69,18 @@ const renderCategories = async () => {
   });
 
   // eslint-disable-next-line no-unused-vars
-  const swiper = new Swiper(categoriesContainerEl, {
+  const swiper = new Swiper(categoriesInnerContainerEl, {
     slidesPerView: 'auto',
-    slidesPerGroup: 1,
+    // slidesPerGroup: 1,
     grabCursor: true,
-    loop: true,
     containerModifierClass: 'categories-',
     speed: 500,
     // Navigation arrows
     navigation: {
       nextEl: '.swiper-button-next',
       prevEl: '.swiper-button-prev'
-    },
-    // Pagination dots
-    /* pagination: {
-      el: '.swiper-pagination',
-      dynamicBullets: true
-    }, */
-    breakpoints: {
+    }
+    /* breakpoints: {
       320: {
         slidesPerGroup: 2
       },
@@ -97,7 +93,7 @@ const renderCategories = async () => {
       900: {
         slidesPerGroup: 5
       }
-    }
+    } */
   });
 };
 

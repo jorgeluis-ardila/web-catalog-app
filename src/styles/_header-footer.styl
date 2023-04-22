@@ -6,6 +6,9 @@ main#wrapper {
   max-height: calc(100vh - 20px);
   background-color: rgba($main-blue--green,0.5);
   scrollbar-color: $comp-blue--dark transparent;
+  &.hidden{
+    overflow: hidden;
+  }
   &::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -116,7 +119,7 @@ header {
       animation stickyHeader 0.5s ease-out 0s;
       width calc(100% - 20px)
       position: fixed;
-      z-index: 2;
+      z-index: 10;
       background-image:
         linear-gradient(to right, rgba($main-blue--green,0.5), rgba($main-blue--green,0.5)),
         linear-gradient(to right, $white, $white);

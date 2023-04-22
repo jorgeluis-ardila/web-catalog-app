@@ -79,11 +79,30 @@ const ProductStructure = function (
     const background = $.createElement('div');
     const modal = $.createElement('div');
 
-    background.setAttribute('id', '');
-    background.appendChild(modal);
-    background.style.height = '100px';
+    background.setAttribute('id', 'modal-product');
+    background.classList.add('modal-background');
+    modal.classList.add('modal-product');
+    modal.onclick = (e) => e.stopPropagation();
+    modal.innerHTML = `
+                        <figure class="modal-product__image">
+                          <img class="modal-product__image" src="${this.image}" alt="${this.name}">
+                        </figure>
+                        <div class="modal-product__info">
+                          <div class="">
+                            <p class="modal-product__name">${this.name}</p>
+                            <em class="modal-product__type">${this.type}</em>
+                          </div>
+                          <p class="modal-product__price">$${this.price}000 COP</p>
+                          <p class="modal-product__description">${this.description}</p>
+                        </div>
+                        <button class="modal-product__close" onclick="document.getElementById('modal-product').remove()">
+                          <svg viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M11.6049 10.5L20.2712 1.83372C20.5763 1.5286 20.5763 1.03392 20.2712 0.728838C19.966 0.42376 19.4714 0.423721 19.1663 0.728838L10.5 9.39516L1.83372 0.728838C1.5286 0.423721 1.03391 0.423721 0.728837 0.728838C0.42376 1.03395 0.423721 1.52864 0.728837 1.83372L9.3951 10.5L0.728837 19.1663C0.423721 19.4714 0.423721 19.9661 0.728837 20.2712C0.881376 20.4237 1.08134 20.5 1.2813 20.5C1.48126 20.5 1.68118 20.4237 1.83376 20.2712L10.5 11.6049L19.1662 20.2712C19.3188 20.4237 19.5187 20.5 19.7187 20.5C19.9187 20.5 20.1186 20.4237 20.2712 20.2712C20.5763 19.9661 20.5763 19.4714 20.2712 19.1663L11.6049 10.5Z"/>
+                          </svg>
+                        </button>`;
+    // $.querySelector('.modal-product__close').onclick = () => this.handleModal.close();
     background.onclick = () => this.handleModal.close();
-    modal.innerHTML = this.description;
+    background.appendChild(modal);
 
     return background;
   };
@@ -92,8 +111,7 @@ const ProductStructure = function (
       $.body.appendChild(this.modalTemplate());
     },
     close: () => {
-      console.log(this.modalTemplate());
-      this.modalTemplate().remove();
+      if ($.body.contains($.getElementById('modal-product'))) $.getElementById('modal-product').remove();
     }
   };
 };
@@ -116,14 +134,32 @@ const resizeHandler = () => {
   };
 };
 
+// CLEAN HTML AND RESET THE PAGE COUNTER
+const resetLayout = (pageValue) => {
+  if (pageValue === 0) currentPage = 0;
+  productContainerEl.innerHTML = '';
+};
+
 // GET ORDER BY STATUS
 const getCheckOrderBy = () => orderByOptionEl.find(radio => radio.checked).value;
 
-// GET SEARCH BAR VALUE
-const getSearchBarEl = () => searchBarEl.value;
+// VALIDATE THE VALUES TO FILTER THE FETCH
+const validateGetFilter = () => {
+  const searchBarValue = searchBarEl.value;
+  const categoryValue = Number($.querySelector('.category-item.active').dataset.id);
+  const filter = searchBarValue && categoryValue
+    ? `/?categoryId=${categoryValue}&title=${searchBarValue}`
+    : searchBarValue
+      ? `/?title=${searchBarValue}`
+      : categoryValue && categoryValue !== 0
+        ? `/?categoryId=${categoryValue}`
+        : '';
+  return filter;
+};
 
 // GET THE PRODUCTS BASED ON THE ORDER BY
-const getProductsList = async (ENDPOINT, filterEndpoint, orderBy) => {
+const sortProducts = async (ENDPOINT, filterEndpoint) => {
+  const orderBy = getCheckOrderBy();
   const products = await getData(ENDPOINT + filterEndpoint);
   let sortedProducts;
   switch (orderBy) {
@@ -151,18 +187,19 @@ const getProductsList = async (ENDPOINT, filterEndpoint, orderBy) => {
 };
 
 // GET A SEGMENT OF PRODUCTS BASED ON THE MAX PER PAGE
-const getElementsByPage = (dataProducts, totalPages) => {
-  currentPage < totalPages && currentPage++;
-  const initialSplit = (currentPage - 1) * productsPerPage;
+const getElementsByPage = (totalProducts, totalPages) => {
+  const initialSplit = currentPage * productsPerPage;
   const finalSplit = initialSplit + productsPerPage;
-  return dataProducts.slice(initialSplit, finalSplit);
+  currentPage < totalPages && currentPage++;
+  return totalProducts.slice(initialSplit, finalSplit);
 };
 
-const renderProducts = async (orderBy = getCheckOrderBy(), filterEndpoint = `/?title=${getSearchBarEl()}`) => {
+const renderProducts = async () => {
   // GET THE TOTAL PAGES BASE ON THE TOTAL PRODUCTS
   const ENDPOINT = '/products';
-  const productsList = orderBy ? await getProductsList(ENDPOINT, filterEndpoint, orderBy) : await getData(ENDPOINT + filterEndpoint);
-  const totalPages = Math.ceil(productsList.length / productsPerPage);
+  const filterEndpoint = validateGetFilter();
+  const totalProducts = await sortProducts(ENDPOINT, filterEndpoint);
+  const totalPages = Math.ceil(totalProducts.length / productsPerPage);
 
   // HANDLE STATE OF PAGINATION BUTTONS
   function handleButtons (totalPages) {
@@ -171,44 +208,44 @@ const renderProducts = async (orderBy = getCheckOrderBy(), filterEndpoint = `/?t
   };
 
   // RENDER PRODUCTE LIST AND PAGINATION
-  const dataProducts = getElementsByPage(productsList, totalPages);
-  console.log(dataProducts);
-  // RENDER PRODUCTS
-  dataProducts.forEach(product => {
-    const productStructure = new ProductStructure(
-      product.id,
-      product.title,
-      product.price,
-      product.category.name,
-      product.description,
-      product.images[0]
-    );
-    productContainerEl.appendChild(productStructure.template());
-  });
+  const productsByPage = getElementsByPage(totalProducts, totalPages);
+  console.log(productsByPage.length);
+  if (productsByPage.length) {
+    // RENDER PRODUCTS
+    productsByPage.forEach(product => {
+      const productStructure = new ProductStructure(
+        product.id,
+        product.title,
+        product.price,
+        product.category.name,
+        product.description,
+        product.images[0]
+      );
+      productContainerEl.appendChild(productStructure.template());
+    });
 
-  // RENDER PAGINATION
-  currentPagesEl.innerHTML = currentPage;
-  totalPagesEl.innerHTML = totalPages;
-  if (!$.body.contains(pageCounterEl)) {
-    pageCounterEl.appendChild(currentPagesEl);
-    currentPagesEl.insertAdjacentText('afterend', 'de');
-    pageCounterEl.appendChild(totalPagesEl);
-    paginationEl.appendChild(prevButtonEl);
-    paginationEl.appendChild(pageCounterEl);
-    paginationEl.appendChild(nextButtonEl);
+    // RENDER PAGINATION
+    currentPagesEl.innerHTML = currentPage;
+    totalPagesEl.innerHTML = totalPages;
+    if (!$.body.contains(pageCounterEl)) {
+      pageCounterEl.appendChild(currentPagesEl);
+      currentPagesEl.insertAdjacentText('afterend', 'de');
+      pageCounterEl.appendChild(totalPagesEl);
+      paginationEl.appendChild(prevButtonEl);
+      paginationEl.appendChild(pageCounterEl);
+      paginationEl.appendChild(nextButtonEl);
+    }
+    handleButtons(totalPages);
   }
-  handleButtons(totalPages);
 };
 
 // HANDLE ACTIONS
 (function () {
-  // const render = renderProducts();
   // HANDLE PAGINATION BUTTON
   paginationButton.forEach(button => {
     button.onclick = async () => {
       button.classList.contains('pagination__button--prevPage') && currentPage > 1 && (currentPage = currentPage - 2);
-      productContainerEl.innerHTML = '';
-      // await render();
+      resetLayout();
       await renderProducts();
     };
   });
@@ -226,9 +263,8 @@ const renderProducts = async (orderBy = getCheckOrderBy(), filterEndpoint = `/?t
   });
   orderByOptionEl.forEach(option => {
     option.onclick = async () => {
-      productContainerEl.innerHTML = '';
-      currentPage = 0;
-      await renderProducts(getCheckOrderBy());
+      resetLayout(0);
+      await renderProducts();
     };
   });
 
@@ -251,21 +287,19 @@ const renderProducts = async (orderBy = getCheckOrderBy(), filterEndpoint = `/?t
 
   // HANDLE SEARCH BAR
   searchBarEl.addEventListener('change', async (e) => {
-    console.log(e.target.value);
-    productContainerEl.innerHTML = '';
-    currentPage = 0;
-    await renderProducts(getCheckOrderBy(), `/?title=${e.target.value}`);
+    // console.log(e.target.value);
+    resetLayout(0);
+    await renderProducts();
   });
   searchBarElButtonEl.onclick = async (e) => {
-    console.log(getSearchBarEl());
-    productContainerEl.innerHTML = '';
-    currentPage = 0;
-    await renderProducts(getCheckOrderBy(), `/?title=${getSearchBarEl()}`);
+    // console.log(getSearchBarEl());
+    resetLayout(0);
+    await renderProducts();
   };
 })();
 
 export {
+  resetLayout,
   renderProducts,
-  getSearchBarEl,
   getCheckOrderBy
 };
