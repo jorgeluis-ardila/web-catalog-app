@@ -6,11 +6,11 @@
 
 <div align="center">
   <h3>
-    <a href="" target="_blank">
+    <a href="https://www.figma.com/proto/bYy4VzDDViKkrtpIv2F0E8/Store?page-id=2%3A2&node-id=5-2225&viewport=-361%2C1014%2C0.76&scaling=scale-down" target="_blank">
       Figma
     </a>
     <span> | </span>
-    <a href="" target="_blank">
+    <a href="https://jorgeluis-ardila.github.io/learning-web-catalog/" target="_blank">
       Solution
     </a>
     <!-- <span> | </span>
@@ -35,9 +35,9 @@
 
 ## Overview
 
-![overview]()
+![overview](https://github.com/jorgeluis-ardila/learning-web-catalog/blob/main/src/assets/overview-web-catalog.jpg)
 
-You can find the demo [here](). This project is made with the purpose to practice and consolidate my knowledge about Javascript bases. You will be able to find a Web Catalog with objective of display the La Lana Land's products generating an easy way to share their products.
+You can find the demo [here](https://jorgeluis-ardila.github.io/learning-web-catalog/). This project is made with the purpose to practice and consolidate my knowledge about Javascript bases. You will be able to find a Web Catalog with objective of display the La Lana Land's products generating an easy way to share their products.
 
 ### Built With
 
@@ -56,6 +56,7 @@ This application/site was created as a solution to a [DevChallenges](https://dev
 **User stories**
 - I can see a list of products with its name, price and image
 - I can sort the products for price, name
+- I can search products by name
 - I can organize the number of columns I want to see
 - I can see the list of products by category
 - I can see the info of products in a modal
